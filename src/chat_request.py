@@ -10,7 +10,12 @@ from promptflow.connections import AzureOpenAIConnection
 from promptflow.core import (AzureOpenAIModelConfiguration, Prompty, tool)
 
 def get_context(question, embedding):
-    return retrieve_documentation(question=question, index_name="rag-index", embedding=embedding)
+    print("Retrieving context for question:", question)
+    print("Retrieving context for embedding:", embedding)
+    context = retrieve_documentation(question=question, index_name="rag-index", embedding=embedding)
+    if context is None:
+        print("Warning: Retrieved context is None.")
+    return context
 
 def get_embedding(question: str):
     connection = AzureOpenAIConnection(        
