@@ -9,7 +9,6 @@ from promptflow.evals.evaluate import evaluate
 from promptflow.evals.evaluators import RelevanceEvaluator, FluencyEvaluator, GroundednessEvaluator, CoherenceEvaluator
 
 def main():
-
     # Read environment variables
     azure_location = os.getenv("AZURE_LOCATION")
     azure_subscription_id = os.getenv("AZURE_SUBSCRIPTION_ID")
@@ -75,7 +74,7 @@ def main():
         "project_name": os.getenv("AZUREAI_PROJECT_NAME"),
     }    
 
-    # https://learn.microsoft.com/en-us/azure/ai-studio/how-to/develop/flow-evaluate-sdk
+    # Define evaluators and data
     fluency_evaluator = FluencyEvaluator(model_config=model_config)
     groundedness_evaluator = GroundednessEvaluator(model_config=model_config)
     relevance_evaluator = RelevanceEvaluator(model_config=model_config)
@@ -83,36 +82,36 @@ def main():
 
     data = "./responses.jsonl"  # path to the data file
 
-# Ensure all evaluators and data are properly initialized and not None
-if all([fluency_evaluator, groundedness_evaluator, relevance_evaluator, coherence_evaluator, data]):
-    try:
-        result = evaluate(
-            evaluation_name=f"{prefix} Quality Evaluation",
-            data=data,
-            evaluators={
-                "Fluency": fluency_evaluator,
-                "Groundedness": groundedness_evaluator,
-                "Relevance": relevance_evaluator,
-                "Coherence": coherence_evaluator
-            },
-            azure_ai_project=azure_ai_project,
-            output_path="./qa_flow_quality_eval.json"
-        )
-    except Exception as e:
-        print(f"An error occurred during evaluation: {e}\n Retrying without reporting results in Azure AI Project.")
-        result = evaluate(
-            evaluation_name=f"{prefix} Quality Evaluation",
-            data=data,
-            evaluators={
-                "Fluency": fluency_evaluator,
-                "Groundedness": groundedness_evaluator,
-                "Relevance": relevance_evaluator,
-                "Coherence": coherence_evaluator
-            },
-            output_path="./qa_flow_quality_eval.json"
-        )
-else:
-    print("One or more evaluators or data are not properly initialized.")        
+    # Ensure all evaluators and data are properly initialized and not None
+    if all([fluency_evaluator, groundedness_evaluator, relevance_evaluator, coherence_evaluator, data]):
+        try:
+            result = evaluate(
+                evaluation_name=f"{prefix} Quality Evaluation",
+                data=data,
+                evaluators={
+                    "Fluency": fluency_evaluator,
+                    "Groundedness": groundedness_evaluator,
+                    "Relevance": relevance_evaluator,
+                    "Coherence": coherence_evaluator
+                },
+                azure_ai_project=azure_ai_project,
+                output_path="./qa_flow_quality_eval.json"
+            )
+        except Exception as e:
+            print(f"An error occurred during evaluation: {e}\n Retrying without reporting results in Azure AI Project.")
+            result = evaluate(
+                evaluation_name=f"{prefix} Quality Evaluation",
+                data=data,
+                evaluators={
+                    "Fluency": fluency_evaluator,
+                    "Groundedness": groundedness_evaluator,
+                    "Relevance": relevance_evaluator,
+                    "Coherence": coherence_evaluator
+                },
+                output_path="./qa_flow_quality_eval.json"
+            )
+    else:
+        print("One or more evaluators or data are not properly initialized.")        
 
 if __name__ == '__main__':
     import promptflow as pf
