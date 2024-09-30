@@ -34,13 +34,17 @@ def get_embedding(question: str):
 @tool
 def get_response(question, chat_history):
     print("inputs:", question)
+    if not question.strip():
+        return {"answer": "No question provided.", "context": []}
+
     embedding = get_embedding(question)
     if embedding is None:
         raise ValueError("Embedding is None, cannot proceed further.")
     
     context = get_context(question, embedding)
     if context is None:
-        raise ValueError("Context is None, cannot proceed further.")
+        print("Warning: Context is None, using default context.")
+        context = ["No relevant context found."]
     
     print("context:", context)
     print("getting result...")
@@ -58,9 +62,14 @@ def get_response(question, chat_history):
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "./chat.prompty")
     prompty_obj = Prompty.load(data_path, model=override_model)
 
-    result = prompty_obj(question = question, documents = context)
+    result = prompty_obj(question=question, documents=context)
 
-    print("result: ", result)
+    if not result:
+        print("Warning: Result is None or empty.")
+    else:
+        print("Result obtained successfully.")
+
+    print("result:", result)
 
     return {"answer": result, "context": context}
 
