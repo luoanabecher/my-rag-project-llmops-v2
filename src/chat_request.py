@@ -28,7 +28,7 @@ def get_embedding(question: str):
 
 @tool
 def get_response(question, chat_history):
-    print("inputs:", question)
+    print("Inputs Question:", question)
     embedding = get_embedding(question)
     if embedding is None:
         raise ValueError("Embedding is None, cannot proceed further.")
@@ -37,8 +37,9 @@ def get_response(question, chat_history):
     if context is None:
         raise ValueError("Context is None, cannot proceed further.")
     
-    print("context:", context)
-    print("getting result...")
+    print("Context:", context)
+    print("Embedding:", embedding)
+    print("Getting result...")
 
     configuration = AzureOpenAIModelConfiguration(
         azure_deployment=os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT", ""),
@@ -53,10 +54,13 @@ def get_response(question, chat_history):
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "./chat.prompty")
     prompty_obj = Prompty.load(data_path, model=override_model)
 
-    result = prompty_obj(question = question, documents = context)
+    result = prompty_obj(question=question, documents=context)
 
-    print("result: ", result)
+    print("Result: ", result)
 
+    if not result or not context:
+        raise ValueError("Result or context is empty, cannot proceed further.")
+    
     return {"answer": result, "context": context}
 
 if __name__ == "__main__":
