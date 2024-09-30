@@ -16,6 +16,10 @@ def main():
     azure_resource_group = os.getenv("AZURE_RESOURCE_GROUP")
     azure_project_name = os.getenv("AZUREAI_PROJECT_NAME")
     prefix = os.getenv("PREFIX", datetime.now().strftime("%y%m%d%H%M%S"))[:14] 
+    
+    # Add validation for prefix
+    if prefix is None:
+        raise ValueError("PREFIX environment variable is not set and default value could not be generated.")
 
     print("AZURE_LOCATION =", azure_location)
     print("AZURE_SUBSCRIPTION_ID =", azure_subscription_id)
