@@ -83,6 +83,8 @@ def main():
 
     data = "./responses.jsonl"  # path to the data file
 
+# Ensure all evaluators and data are properly initialized and not None
+if all([fluency_evaluator, groundedness_evaluator, relevance_evaluator, coherence_evaluator, data]):
     try:
         result = evaluate(
             evaluation_name=f"{prefix} Quality Evaluation",
@@ -108,7 +110,9 @@ def main():
                 "Coherence": coherence_evaluator
             },
             output_path="./qa_flow_quality_eval.json"
-        )        
+        )
+else:
+    print("One or more evaluators or data are not properly initialized.")        
 
 if __name__ == '__main__':
     import promptflow as pf
