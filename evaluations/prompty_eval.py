@@ -19,6 +19,10 @@ def main():
     details = pf.get_details(base_run)
     print(details.head(10))
 
+    # Check if outputs.output is None
+    if 'output' not in details.columns or details['output'].isnull().all():
+        raise ValueError("outputs.output is None or missing. Please check the base run configuration.")
+
 
     # Evaluation run
     eval_prompty = "./evaluations/prompty-answer-score-eval.prompty"
