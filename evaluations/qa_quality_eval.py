@@ -48,6 +48,12 @@ def main():
     responses = pf.get_details(base_run)
     print(responses.head(10))
 
+    # Check if the required columns exist before proceeding
+    required_columns = ['inputs.question', 'inputs.chat_history', 'outputs.answer', 'outputs.context']
+    missing_columns = [col for col in required_columns if col not in responses.columns]
+    if missing_columns:
+        raise KeyError(f"Missing required columns: {missing_columns}")
+    
     # Convert to jsonl
     relevant_columns = responses[['inputs.question', 'inputs.chat_history', 'outputs.answer', 'outputs.context']]
     relevant_columns.columns = ['question', 'chat_history', 'answer', 'context']
