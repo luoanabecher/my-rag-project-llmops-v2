@@ -48,15 +48,21 @@ def main():
     responses = pf.get_details(base_run)
     print("Checking outputs in responses DataFrame")
     print(responses.columns)  # Print all columns to verify presence of 'outputs.answer' and 'outputs.context'
-    print(responses[['outputs.answer', 'outputs.context']].head(10))  # Print first 10 rows of these columns
+    if 'outputs.answer' in responses.columns and 'outputs.context' in responses.columns:
+        print(responses[['outputs.answer', 'outputs.context']].head(10))  # Print first 10 rows of these columns
+    else:
+        print("Error: 'outputs.answer' or 'outputs.context' not in DataFrame columns")
 
     # Convert to jsonl
-    relevant_columns = responses[['inputs.question', 'inputs.chat_history', 'outputs.answer', 'outputs.context']]
-    relevant_columns.columns = ['question', 'chat_history', 'answer', 'context']
-    data_list = relevant_columns.to_dict(orient='records')
-    with open('responses.jsonl', 'w') as f:
-        for item in data_list:
-            f.write(json.dumps(item) + '\n')    
+    if 'outputs.answer' in responses.columns and 'outputs.context' in responses.columns:
+        relevant_columns = responses[['inputs.question', 'inputs.chat_history', 'outputs.answer', 'outputs.context']]
+        relevant_columns.columns = ['question', 'chat_history', 'answer', 'context']
+        data_list = relevant_columns.to_dict(orient='records')
+        with open('responses.jsonl', 'w') as f:
+            for item in data_list:
+                f.write(json.dumps(item) + '\n')    
+    else:
+        raise KeyError("Required columns 'outputs.answer' and 'outputs.context' are missing")
 
     ##################################
     ## Evaluation
