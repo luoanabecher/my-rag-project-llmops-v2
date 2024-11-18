@@ -51,6 +51,9 @@ def get_response(question, chat_history):
 
     print("result: ", result)
 
+    if not result or not context:
+        raise ValueError("Result or context is empty, cannot proceed further.")
+
     return {"answer": result, "context": context}
 
 if __name__ == "__main__":
